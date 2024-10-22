@@ -1,6 +1,3 @@
-Here's a sample README.md file for your typing game, **SwiftKeys**:
-
-```markdown
 # SwiftKeys
 
 Welcome to **SwiftKeys**, an interactive typing speed game designed to enhance your typing skills while keeping you engaged. Test your typing prowess by typing a randomly generated paragraph and track your performance in terms of speed and accuracy!
@@ -59,4 +56,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Contact
 
 For inquiries or feedback, please reach out to me at [nitinsingh9765@gmail.com](mailto:nitinsingh9765@gmail.com).
-```
+
