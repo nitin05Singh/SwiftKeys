@@ -19,7 +19,7 @@ To run **SwiftKeys** locally, follow these steps:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/SwiftKeys.git
+   git clone https://github.com/nitin05Singh/SwiftKeys.git
    cd SwiftKeys
    ```
 
