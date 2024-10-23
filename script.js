@@ -49,6 +49,7 @@ function updateParagraph(paragraph) {
 }
 
 // Initialize typing and handle logic
+// Initialize typing and handle logic
 function initTyping(e) {
   const char = typingText.querySelectorAll("span");
   const typedChar = e.key; // Get the key the user pressed
@@ -57,6 +58,11 @@ function initTyping(e) {
     if (!isTyping) {
       timer = setInterval(initTimer, 1000);
       isTyping = true;
+    }
+
+    // Remove 'active' class from the current active character
+    if (char[charIndex]) {
+      char[charIndex].classList.remove("active");
     }
 
     if (char[charIndex].innerText === typedChar) {
@@ -68,7 +74,7 @@ function initTyping(e) {
     }
     charIndex++;
     if (charIndex < char.length) {
-      char[charIndex].classList.add("active");
+      char[charIndex].classList.add("active"); // Highlight the next character
     }
     cpm.innerText = charIndex - mistake; // Update CPM (Characters Per Minute)
   } else if (timeleft <= 0) {
