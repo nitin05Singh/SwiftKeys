@@ -8,8 +8,8 @@ const modal = document.getElementById("resultModal");
 const closeBtn = document.querySelector(".close");
 const generateReportBtn = document.getElementById("generateReportBtn");
 const userNameInput = document.getElementById("userNameInput");
+const inputField = document.querySelector(".input-field"); // Hidden input field
 const { jsPDF } = window.jspdf;
-const inputField = document.querySelector(".input-field");
 
 let timer;
 let maxTime = 60;
@@ -17,22 +17,26 @@ let timeleft = maxTime;
 let charIndex = 0;
 let mistake = 0;
 let isTyping = false;
+let paragraph = "";
 
 // Load paragraph from API
 async function loadParagraph() {
   try {
     const response = await fetch(
-      "https://baconipsum.com/api/?type=cricket-and-filler¶s=1&format=text"
+      "https://baconipsum.com/api/?type=meat-and-filler&paras=1&format=text"
     );
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
 
-    // Limit paragraph length if needed
-    const paragraph = await response.text();
-    return paragraph.length > 500
-      ? paragraph.substring(0, 500) + "..."
-      : paragraph; // Limiting to 500 characters
+    let paragraph = await response.text();
+    // Limit paragraph to 150 characters or to the last complete word
+    if (paragraph.length > 150) {
+      paragraph = paragraph.substring(0, 500);
+      const lastSpace = paragraph.lastIndexOf(" "); // Ensure not to cut off in the middle of a word
+      paragraph = paragraph.substring(0, lastSpace);
+    }
+    return paragraph;
   } catch (error) {
     console.error("Error fetching paragraph:", error);
     return "Error loading paragraph"; // Fallback message
@@ -47,26 +51,16 @@ function updateParagraph(paragraph) {
     span.textContent = char;
     typingText.appendChild(span);
   });
-  typingText.querySelectorAll("span")[0].classList.add("active"); // Highlight the first character
-  charIndex = 0; // Reset character index
+  typingText.querySelectorAll("span")[0].classList.add("active");
+  charIndex = 0;
 }
 
-function initTyping(e) {
-  // Prevent default behavior for space bar to stop page scrolling
-  if (e.key === " ") {
-    e.preventDefault();
-  }
-
+// Function to handle typing logic
+function initTyping(inputValue) {
   const char = typingText.querySelectorAll("span");
-  const typedChar = e.key;
+  const typedChar = inputValue.charAt(inputValue.length - 1);
 
-  // Check if the pressed key is a printable character (ignoring non-character keys)
-  if (
-    e.key.length === 1 &&
-    charIndex < char.length &&
-    timeleft > 0 &&
-    /^[a-zA-Z0-9 .,]*$/g.test(typedChar)
-  ) {
+  if (charIndex < char.length && timeleft > 0) {
     if (!isTyping) {
       timer = setInterval(initTimer, 1000);
       isTyping = true;
@@ -78,17 +72,17 @@ function initTyping(e) {
       } else {
         char[charIndex].classList.add("incorrect");
         mistake++;
-        mistakes.textContent = mistake; // Update mistakes count
+        mistakes.textContent = mistake;
       }
       charIndex++;
       if (charIndex < char.length) {
         char[charIndex].classList.add("active");
       }
-      cpm.innerText = charIndex - mistake; // Update CPM (Characters Per Minute)
+      cpm.innerText = charIndex - mistake;
     }
   } else if (timeleft <= 0) {
     clearInterval(timer);
-    showResultModal(); // Show result modal when time is up
+    showResultModal();
   }
 }
 
@@ -100,21 +94,21 @@ function initTimer() {
     const wpmVal = Math.round(
       ((charIndex - mistake) / 5) * (60 / (maxTime - timeleft))
     );
-    wpm.innerText = wpmVal; // Update WPM (Words Per Minute)
+    wpm.innerText = wpmVal;
   } else {
     clearInterval(timer);
-    showResultModal(); // Show result modal when time is up
+    showResultModal();
   }
 }
 
 // Show result modal to ask user's name
 function showResultModal() {
-  modal.style.display = "block"; // Show the modal
+  modal.style.display = "block";
 }
 
 // Close modal on clicking close button
 closeBtn.onclick = function () {
-  modal.style.display = "none"; // Hide the modal
+  modal.style.display = "none";
 };
 
 // Close modal if clicked outside of modal
@@ -124,30 +118,11 @@ window.onclick = function (event) {
   }
 };
 
-function focusInputField() {
-  inputField.focus();
-}
-
-function startTyping() {
-  focusInputField();
-  document.addEventListener("keydown", initTyping); // Handle typing events
-}
-
-document.querySelector(".wrapper").addEventListener("click", focusInputField);
-
-btn.addEventListener("click", function () {
-  reset();
-  startTyping();
-});
-
-// INITIAL CALL TO START TYPING
-startTyping();
-
 generateReportBtn.addEventListener("click", function () {
   const userName = userNameInput.value.trim();
   if (userName) {
-    generatePDF(userName); // Generate PDF report after getting the user's name
-    modal.style.display = "none"; // Hide the modal after PDF is generated
+    generatePDF(userName);
+    modal.style.display = "none";
   } else {
     alert("Please enter your name!");
   }
@@ -176,7 +151,6 @@ function reset() {
 
 // Generate a PDF report
 function generatePDF(userName) {
-  // Define PDF content
   const pdfContent = `
     Typing Test Report\n\n
     Name: ${userName}\n
@@ -184,13 +158,9 @@ function generatePDF(userName) {
     Words Per Minute (WPM): ${wpm.innerText}\n
     Characters Per Minute (CPM): ${cpm.innerText}
   `;
-
-  // Create a new jsPDF document
   const doc = new jsPDF();
   doc.setFontSize(16);
-  doc.text(pdfContent, 10, 10); // Add the text to the PDF at position (10, 10)
-
-  // Save the PDF with the user's name
+  doc.text(pdfContent, 10, 10);
   doc.save(`${userName}-typing-test-report.pdf`);
 }
 
@@ -203,11 +173,15 @@ loadParagraph()
     console.error("Error:", err);
   });
 
-document.addEventListener("keydown", initTyping); // Handle typing events
-btn.addEventListener("click", reset); // Reset game when clicking "Try Again"
-document.querySelector(".wrapper").addEventListener("click", focusInputField);
+// Set focus on the input field when the page loads and on clicking the main area
+window.onload = () => inputField.focus();
+document.querySelector(".wrapper").onclick = () => inputField.focus();
 
-btn.addEventListener("click", function () {
-  reset();
-  startTyping();
+// Handle input to support typing on mobile devices
+inputField.addEventListener("input", (e) => {
+  initTyping(e.target.value);
+  inputField.value = ""; // Clear input after processing
 });
+
+// Reset game when clicking "Try Again"
+btn.addEventListener("click", reset);
