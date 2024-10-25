@@ -9,6 +9,7 @@ const closeBtn = document.querySelector(".close");
 const generateReportBtn = document.getElementById("generateReportBtn");
 const userNameInput = document.getElementById("userNameInput");
 const { jsPDF } = window.jspdf;
+const inputField = document.querySelector(".input-field");
 
 let timer;
 let maxTime = 60;
@@ -123,6 +124,25 @@ window.onclick = function (event) {
   }
 };
 
+function focusInputField() {
+  inputField.focus();
+}
+
+function startTyping() {
+  focusInputField();
+  document.addEventListener("keydown", initTyping); // Handle typing events
+}
+
+document.querySelector(".wrapper").addEventListener("click", focusInputField);
+
+btn.addEventListener("click", function () {
+  reset();
+  startTyping();
+});
+
+// INITIAL CALL TO START TYPING
+startTyping();
+
 generateReportBtn.addEventListener("click", function () {
   const userName = userNameInput.value.trim();
   if (userName) {
@@ -185,3 +205,9 @@ loadParagraph()
 
 document.addEventListener("keydown", initTyping); // Handle typing events
 btn.addEventListener("click", reset); // Reset game when clicking "Try Again"
+document.querySelector(".wrapper").addEventListener("click", focusInputField);
+
+btn.addEventListener("click", function () {
+  reset();
+  startTyping();
+});

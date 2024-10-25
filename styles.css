@@ -182,3 +182,15 @@ footer a:hover {
 .modal-content button:hover {
   background-color: #45a049;
 }
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .wrapper {
+    width: 90%;
+    padding: 20px;
+    font-size: 1.2rem;
+  }
+
+  .modal-content {
+    width: 80%;
+  }
+}
