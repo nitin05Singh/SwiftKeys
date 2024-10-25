@@ -21,15 +21,17 @@ let isTyping = false;
 async function loadParagraph() {
   try {
     const response = await fetch(
-      "https://baconipsum.com/api/?type=cricket-and-filler&paras=1&format=text"
+      "https://baconipsum.com/api/?type=cricket-and-filler¶s=1&format=text"
     );
-
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
 
+    // Limit paragraph length if needed
     const paragraph = await response.text();
-    return paragraph;
+    return paragraph.length > 500
+      ? paragraph.substring(0, 500) + "..."
+      : paragraph; // Limiting to 500 characters
   } catch (error) {
     console.error("Error fetching paragraph:", error);
     return "Error loading paragraph"; // Fallback message
@@ -48,35 +50,41 @@ function updateParagraph(paragraph) {
   charIndex = 0; // Reset character index
 }
 
-// Initialize typing and handle logic
-// Initialize typing and handle logic
 function initTyping(e) {
-  const char = typingText.querySelectorAll("span");
-  const typedChar = e.key; // Get the key the user pressed
+  // Prevent default behavior for space bar to stop page scrolling
+  if (e.key === " ") {
+    e.preventDefault();
+  }
 
-  if (charIndex < char.length && timeleft > 0) {
+  const char = typingText.querySelectorAll("span");
+  const typedChar = e.key;
+
+  // Check if the pressed key is a printable character (ignoring non-character keys)
+  if (
+    e.key.length === 1 &&
+    charIndex < char.length &&
+    timeleft > 0 &&
+    /^[a-zA-Z0-9 .,]*$/g.test(typedChar)
+  ) {
     if (!isTyping) {
       timer = setInterval(initTimer, 1000);
       isTyping = true;
     }
-
-    // Remove 'active' class from the current active character
     if (char[charIndex]) {
       char[charIndex].classList.remove("active");
+      if (char[charIndex].innerText === typedChar) {
+        char[charIndex].classList.add("correct");
+      } else {
+        char[charIndex].classList.add("incorrect");
+        mistake++;
+        mistakes.textContent = mistake; // Update mistakes count
+      }
+      charIndex++;
+      if (charIndex < char.length) {
+        char[charIndex].classList.add("active");
+      }
+      cpm.innerText = charIndex - mistake; // Update CPM (Characters Per Minute)
     }
-
-    if (char[charIndex].innerText === typedChar) {
-      char[charIndex].classList.add("correct");
-    } else {
-      char[charIndex].classList.add("incorrect");
-      mistake++;
-      mistakes.textContent = mistake; // Update mistakes count
-    }
-    charIndex++;
-    if (charIndex < char.length) {
-      char[charIndex].classList.add("active"); // Highlight the next character
-    }
-    cpm.innerText = charIndex - mistake; // Update CPM (Characters Per Minute)
   } else if (timeleft <= 0) {
     clearInterval(timer);
     showResultModal(); // Show result modal when time is up
@@ -88,7 +96,6 @@ function initTimer() {
   if (timeleft > 0) {
     timeleft--;
     time.innerText = timeleft;
-
     const wpmVal = Math.round(
       ((charIndex - mistake) / 5) * (60 / (maxTime - timeleft))
     );

@@ -15,9 +15,9 @@ body {
   text-rendering: optimizeLegibility;
   background-image: url(https://res.cloudinary.com/dn1j6dpd7/image/upload/f_auto,q_auto/v1600423784/typing-speed-test/test-bg-left.png),
     url(https://res.cloudinary.com/dn1j6dpd7/image/upload/f_auto,q_auto/v1600423784/typing-speed-test/test-bg-right.png);
-  background-size: contain; /* Change to 'contain' or specify sizes */
-  background-repeat: no-repeat; /* Prevent background repeat */
-  background-position: left center, right center; /* Center the images */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left center, right center;
 }
 
 /* Header Styling */
@@ -64,8 +64,8 @@ header nav h1 {
 
 /* Active Text Styling */
 .typing-text span.active {
-  border: 2px solid blue; /* Blue border for active character */
-  border-radius: 5px; /* Rounded corners for a softer look */
+  border: 2px solid blue;
+  border-radius: 5px;
 }
 
 /* Result and Buttons */
@@ -110,11 +110,11 @@ button:hover {
 
 /* Active, Correct, and Incorrect Styles */
 .correct {
-  color: green; /* Correct text color */
+  color: green;
 }
 
 .incorrect {
-  color: red; /* Incorrect text color */
+  color: red;
 }
 
 /* Footer Section */

@@ -7,18 +7,16 @@
     <link href="styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   </head>
+
   <body>
-    <!-- Header Section -->
     <header>
       <nav>
         <h1>Typing Speed Test</h1>
       </nav>
     </header>
 
-    <!-- Main Wrapper -->
     <main class="wrapper">
       <input type="text" class="input-field" />
-
       <div class="content-box">
         <div class="typing-text">
           <p>Loading paragraph...</p>
@@ -47,7 +45,6 @@
       </div>
     </main>
 
-    <!-- Footer Section -->
     <footer>
       <div class="footer-content">
         <p>
@@ -65,17 +62,15 @@
       </div>
     </footer>
 
-    <!-- Modal for Test Result -->
     <div id="resultModal" class="modal">
       <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close">×</span>
         <h2>Test Completed!</h2>
         <p>Please enter your name to generate the report:</p>
         <input type="text" id="userNameInput" placeholder="Enter your name" />
         <button id="generateReportBtn">Generate PDF</button>
       </div>
     </div>
-
     <script src="script.js"></script>
   </body>
 </html>
